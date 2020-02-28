@@ -695,6 +695,7 @@ class Grid extends React.PureComponent<Props, State> {
     const {
       autoHeight,
       autoWidth,
+      direction,
       columnCount,
       height,
       rowCount,
@@ -736,7 +737,11 @@ class Grid extends React.PureComponent<Props, State> {
         (scrollLeft !== this._scrollingContainer.scrollLeft ||
           columnOrRowCountJustIncreasedFromZero)
       ) {
-        this._scrollingContainer.scrollLeft = scrollLeft;
+        if (direction === DIRECTION.RTL) {
+          this._scrollingContainer.scrollLeft = scrollLeft * -1;
+        } else {
+          this._scrollingContainer.scrollLeft = scrollLeft;
+        }
       }
       if (
         !autoHeight &&
