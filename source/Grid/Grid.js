@@ -51,6 +51,11 @@ const SCROLL_POSITION_CHANGE_REASONS = {
   REQUESTED: 'requested',
 };
 
+const DIRECTION = {
+  RTL: 'rtl',
+  LTR: 'ltr',
+};
+
 const renderNull: NoContentRenderer = () => null;
 
 type ScrollPosition = {
@@ -429,7 +434,7 @@ class Grid extends React.PureComponent<Props, State> {
     // Prevent pointer events from interrupting a smooth scroll
     this._debounceScrollEnded();
 
-    const {autoHeight, autoWidth, height, width} = this.props;
+    const {autoHeight, autoWidth, direction, height, width} = this.props;
     const {instanceProps} = this.state;
 
     // When this component is shrunk drastically, React dispatches a series of back-to-back scroll events,
@@ -439,10 +444,17 @@ class Grid extends React.PureComponent<Props, State> {
     const scrollbarSize = instanceProps.scrollbarSize;
     const totalRowsHeight = instanceProps.rowSizeAndPositionManager.getTotalSize();
     const totalColumnsWidth = instanceProps.columnSizeAndPositionManager.getTotalSize();
+
+    // When using RTL, scroll is always negative
+    if (direction === DIRECTION.RTL) {
+      scrollLeftParam = scrollLeftParam * -1;
+    }
+
     const scrollLeft = Math.min(
       Math.max(0, totalColumnsWidth - width + scrollbarSize),
       scrollLeftParam,
     );
+
     const scrollTop = Math.min(
       Math.max(0, totalRowsHeight - height + scrollbarSize),
       scrollTopParam,
@@ -974,6 +986,7 @@ class Grid extends React.PureComponent<Props, State> {
       containerProps,
       containerRole,
       containerStyle,
+      direction,
       height,
       id,
       noContentRenderer,
@@ -988,7 +1001,7 @@ class Grid extends React.PureComponent<Props, State> {
 
     const gridStyle: Object = {
       boxSizing: 'border-box',
-      direction: 'ltr',
+      direction,
       height: autoHeight ? 'auto' : height,
       position: 'relative',
       width: autoWidth ? 'auto' : width,
@@ -1091,6 +1104,7 @@ class Grid extends React.PureComponent<Props, State> {
       cellRenderer,
       cellRangeRenderer,
       columnCount,
+      direction,
       deferredMeasurementCache,
       height,
       overscanColumnCount,
@@ -1234,6 +1248,7 @@ class Grid extends React.PureComponent<Props, State> {
           instanceProps.columnSizeAndPositionManager,
         columnStartIndex,
         columnStopIndex,
+        direction,
         deferredMeasurementCache,
         horizontalOffsetAdjustment,
         isScrolling,

@@ -13,6 +13,7 @@ export default function defaultCellRangeRenderer({
   columnSizeAndPositionManager,
   columnStartIndex,
   columnStopIndex,
+  direction,
   deferredMeasurementCache,
   horizontalOffsetAdjustment,
   isScrolling,
@@ -73,7 +74,8 @@ export default function defaultCellRangeRenderer({
           // Positioning them further to the right/bottom influences their measured size.
           style = {
             height: 'auto',
-            left: 0,
+            left: direction === 'rtl' ? undefined : 0,
+            right: direction === 'rtl' ? 0 : undefined,
             position: 'absolute',
             top: 0,
             width: 'auto',
@@ -81,7 +83,14 @@ export default function defaultCellRangeRenderer({
         } else {
           style = {
             height: rowDatum.size,
-            left: columnDatum.offset + horizontalOffsetAdjustment,
+            left:
+              direction === 'rtl'
+                ? undefined
+                : columnDatum.offset + horizontalOffsetAdjustment,
+            right:
+              direction === 'rtl'
+                ? columnDatum.offset + horizontalOffsetAdjustment
+                : undefined,
             position: 'absolute',
             top: rowDatum.offset + verticalOffsetAdjustment,
             width: columnDatum.size,

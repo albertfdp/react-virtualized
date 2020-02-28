@@ -30,6 +30,7 @@ export default class GridExample extends React.PureComponent {
       scrollToColumn: undefined,
       scrollToRow: undefined,
       useDynamicRowHeight: false,
+      useRTL: true,
     };
 
     this._cellRenderer = this._cellRenderer.bind(this);
@@ -56,6 +57,7 @@ export default class GridExample extends React.PureComponent {
       scrollToColumn,
       scrollToRow,
       useDynamicRowHeight,
+      useRTL,
     } = this.state;
 
     return (
@@ -85,6 +87,17 @@ export default class GridExample extends React.PureComponent {
               }
             />
             Use dynamic row height?
+          </label>
+
+          <label className={styles.checkboxLabel}>
+            <input
+              aria-label="Use dynamic row height?"
+              className={styles.checkbox}
+              type="checkbox"
+              value={useRTL}
+              onChange={event => this._updateUseRTL(event.target.checked)}
+            />
+            Use RTL?
           </label>
         </ContentBoxParagraph>
 
@@ -119,7 +132,9 @@ export default class GridExample extends React.PureComponent {
             label="List height"
             name="height"
             onChange={event =>
-              this.setState({height: parseInt(event.target.value, 10) || 1})
+              this.setState({
+                height: parseInt(event.target.value, 10) || 1,
+              })
             }
             value={height}
           />
@@ -163,6 +178,7 @@ export default class GridExample extends React.PureComponent {
               className={styles.BodyGrid}
               columnWidth={this._getColumnWidth}
               columnCount={columnCount}
+              direction={useRTL ? 'rtl' : 'ltr'}
               height={height}
               noContentRenderer={this._noContentRenderer}
               overscanColumnCount={overscanColumnCount}
@@ -181,9 +197,19 @@ export default class GridExample extends React.PureComponent {
 
   _cellRenderer({columnIndex, key, rowIndex, style}) {
     if (columnIndex === 0) {
-      return this._renderLeftSideCell({columnIndex, key, rowIndex, style});
+      return this._renderLeftSideCell({
+        columnIndex,
+        key,
+        rowIndex,
+        style,
+      });
     } else {
-      return this._renderBodyCell({columnIndex, key, rowIndex, style});
+      return this._renderBodyCell({
+        columnIndex,
+        key,
+        rowIndex,
+        style,
+      });
     }
   }
 
@@ -270,6 +296,12 @@ export default class GridExample extends React.PureComponent {
   _updateUseDynamicRowHeights(value) {
     this.setState({
       useDynamicRowHeight: value,
+    });
+  }
+
+  _updateUseRTL(value) {
+    this.setState({
+      useRTL: value,
     });
   }
 
