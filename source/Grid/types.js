@@ -107,6 +107,8 @@ export type OverscanIndicesGetter = (
   params: OverscanIndicesGetterParams,
 ) => OverscanIndices;
 
+export type Direction = 'rtl' | 'ltr';
+
 export type Alignment = 'auto' | 'end' | 'start' | 'center';
 
 export type VisibleCellRange = {

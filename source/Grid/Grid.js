@@ -11,6 +11,7 @@ import type {
   ScrollbarPresenceChange,
   RenderedSection,
   OverscanIndicesGetter,
+  Direction,
   Alignment,
   CellCache,
   StyleCache,
@@ -102,6 +103,9 @@ type Props = {
 
   /** Optional inline style applied to inner cell-container */
   containerStyle: Object,
+
+  /** Direction (right-to-left or left-to-right) */
+  direction: Direction,
 
   /**
    * If CellMeasurer is used to measure this Grid's children, this should be a pointer to its CellMeasurerCache.
@@ -265,6 +269,7 @@ class Grid extends React.PureComponent<Props, State> {
     cellRangeRenderer: defaultCellRangeRenderer,
     containerRole: 'rowgroup',
     containerStyle: {},
+    direction: 'ltr',
     estimatedColumnSize: 100,
     estimatedRowSize: 30,
     getScrollbarSize: scrollbarSize,
@@ -311,7 +316,7 @@ class Grid extends React.PureComponent<Props, State> {
   _renderedRowStopIndex = 0;
 
   _initialScrollTop: number;
-  _initialScrollLeft: number;
+  _initialScrollHorizontal: number;
 
   _disablePointerEventsTimeoutId: ?AnimationTimeoutId;
 
@@ -361,7 +366,7 @@ class Grid extends React.PureComponent<Props, State> {
       this._initialScrollTop = this._getCalculatedScrollTop(props, this.state);
     }
     if (props.scrollToColumn > 0) {
-      this._initialScrollLeft = this._getCalculatedScrollLeft(
+      this._initialScrollHorizontal = this._getCalculatedScrollLeft(
         props,
         this.state,
       );
@@ -601,7 +606,7 @@ class Grid extends React.PureComponent<Props, State> {
 
     // Reset initial offsets to be ignored in browser
     this._initialScrollTop = 0;
-    this._initialScrollLeft = 0;
+    this._initialScrollHorizontal = 0;
 
     // If cell sizes have been invalidated (eg we are using CellMeasurer) then reset cached positions.
     // We must do this at the start of the method as we may calculate and update scroll position below.
@@ -1105,7 +1110,9 @@ class Grid extends React.PureComponent<Props, State> {
     const scrollTop =
       this._initialScrollTop > 0 ? this._initialScrollTop : state.scrollTop;
     const scrollLeft =
-      this._initialScrollLeft > 0 ? this._initialScrollLeft : state.scrollLeft;
+      this._initialScrollHorizontal > 0
+        ? this._initialScrollHorizontal
+        : state.scrollLeft;
 
     const isScrolling = this._isScrolling(props, state);
 
