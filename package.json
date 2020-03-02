@@ -1,5 +1,5 @@
 {
-  "name": "react-virtualized",
+  "name": "@albertfdp/react-virtualized",
   "description": "React components for efficiently rendering large, scrollable lists and tabular data",
   "author": "Brian Vaughn <brian.david.vaughn@gmail.com>",
   "user": "bvaughn",
