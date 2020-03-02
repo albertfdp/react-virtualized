@@ -16,12 +16,10 @@ const STYLE = {
   border: '1px solid #ddd',
 };
 const STYLE_BOTTOM_LEFT_GRID = {
-  borderRight: '2px solid #aaa',
   backgroundColor: '#f7f7f7',
 };
 const STYLE_TOP_LEFT_GRID = {
   borderBottom: '2px solid #aaa',
-  borderRight: '2px solid #aaa',
   fontWeight: 'bold',
 };
 const STYLE_TOP_RIGHT_GRID = {
@@ -42,6 +40,7 @@ export default class MultiGridExample extends React.PureComponent {
       fixedRowCount: 1,
       scrollToColumn: 0,
       scrollToRow: 0,
+      direction: 'rtl',
     };
 
     this._cellRenderer = this._cellRenderer.bind(this);
@@ -54,6 +53,8 @@ export default class MultiGridExample extends React.PureComponent {
   }
 
   render() {
+    const isRtl = this.state.direction === 'rtl';
+
     return (
       <ContentBox>
         <ContentBoxHeader
@@ -65,6 +66,19 @@ export default class MultiGridExample extends React.PureComponent {
         <ContentBoxParagraph>
           This component stitches together several grids to provide a fixed
           column/row interface.
+        </ContentBoxParagraph>
+
+        <ContentBoxParagraph>
+          <label className={styles.checkboxLabel}>
+            <input
+              aria-label="Use RTL direction"
+              className={styles.checkbox}
+              type="checkbox"
+              value={isRtl}
+              onChange={event => this._onDirectionChanged(event.target.checked)}
+            />
+            Use RTL direction
+          </label>
         </ContentBoxParagraph>
 
         <InputRow>
@@ -96,8 +110,16 @@ export default class MultiGridExample extends React.PureComponent {
               rowHeight={40}
               rowCount={100}
               style={STYLE}
-              styleBottomLeftGrid={STYLE_BOTTOM_LEFT_GRID}
-              styleTopLeftGrid={STYLE_TOP_LEFT_GRID}
+              styleBottomLeftGrid={{
+                ...STYLE_BOTTOM_LEFT_GRID,
+                borderRight: isRtl ? undefined : '2px solid #aaa',
+                borderLeft: isRtl ? '2px solid #aaa' : undefined,
+              }}
+              styleTopLeftGrid={{
+                ...STYLE_TOP_LEFT_GRID,
+                borderRight: isRtl ? undefined : '2px solid #aaa',
+                borderLeft: isRtl ? '2px solid #aaa' : undefined,
+              }}
               styleTopRightGrid={STYLE_TOP_RIGHT_GRID}
               width={width}
               hideTopRightGridScrollbar
@@ -115,6 +137,12 @@ export default class MultiGridExample extends React.PureComponent {
         {columnIndex}, {rowIndex}
       </div>
     );
+  }
+
+  _onDirectionChanged(value) {
+    this.setState({
+      direction: value ? 'rtl' : 'ltr',
+    });
   }
 
   _createEventHandler(property) {
