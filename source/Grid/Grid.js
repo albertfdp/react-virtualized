@@ -62,9 +62,6 @@ type ScrollPosition = {
 };
 
 type Props = {
-  'aria-label': string,
-  'aria-readonly'?: boolean,
-
   /**
    * Set the width of the inner scrollable container to 'auto'.
    * This is useful for single-column Grids to ensure that the column doesn't extend below a vertical scrollbar.
