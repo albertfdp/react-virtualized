@@ -40,7 +40,7 @@ export default class MultiGridExample extends React.PureComponent {
       fixedRowCount: 1,
       scrollToColumn: 0,
       scrollToRow: 0,
-      direction: 'rtl',
+      direction: 'ltr',
     };
 
     this._cellRenderer = this._cellRenderer.bind(this);
