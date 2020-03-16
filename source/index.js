@@ -16,6 +16,7 @@ export {
   Masonry,
 } from './Masonry';
 export {MultiGrid} from './MultiGrid';
+export {Spreadsheet} from './Spreadsheet';
 export {ScrollSync} from './ScrollSync';
 export {
   createMultiSort as createTableMultiSort,
