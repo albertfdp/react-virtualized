@@ -1035,11 +1035,13 @@ class Grid extends React.PureComponent<Props, State> {
       containerProps,
       containerRole,
       containerStyle,
+      columnCount,
       direction,
       height,
       id,
       noContentRenderer,
       role,
+      rowCount,
       style,
       tabIndex,
       width,
@@ -1115,6 +1117,8 @@ class Grid extends React.PureComponent<Props, State> {
         className={clsx('ReactVirtualized__Grid', className)}
         id={id}
         onScroll={this._onScroll}
+        aria-colcount={columnCount}
+        aria-rowcount={rowCount}
         role={role}
         style={{
           ...gridStyle,
