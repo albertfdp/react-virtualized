@@ -305,6 +305,7 @@ class MultiGrid extends React.PureComponent {
 
     return cellRenderer({
       ...rest,
+      role: 'gridcell',
       columnIndex: columnIndex + fixedColumnCount,
       parent: this,
       rowIndex: rowIndex + fixedRowCount,
