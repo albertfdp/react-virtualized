@@ -34,6 +34,7 @@ class Spreadsheet extends React.PureComponent {
     noContentRendererTopLeftGrid: PropTypes.func,
     noContentRendererTopRightGrid: PropTypes.func,
     onScrollbarPresenceChange: PropTypes.func,
+    rowRendererBottomRight: PropTypes.func,
     style: PropTypes.object.isRequired,
     styleBottomLeftGrid: PropTypes.object.isRequired,
     styleBottomRightGrid: PropTypes.object.isRequired,
@@ -700,6 +701,7 @@ class Spreadsheet extends React.PureComponent {
       fixedColumnCount,
       fixedRowCount,
       rowCount,
+      rowRendererBottomRight,
       scrollToColumn,
       scrollToRow,
     } = props;
@@ -718,6 +720,7 @@ class Spreadsheet extends React.PureComponent {
         ref={this._bottomRightGridRef}
         rowCount={Math.max(0, rowCount - fixedRowCount)}
         rowHeight={this._rowHeightBottomGrid}
+        rowRenderer={rowRendererBottomRight}
         noContentRenderer={this.props.noContentRendererBottomRightGrid}
         scrollToColumn={scrollToColumn - fixedColumnCount}
         scrollToRow={scrollToRow - fixedRowCount}

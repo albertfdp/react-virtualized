@@ -44,6 +44,7 @@ export default class SpreadsheetExample extends React.PureComponent {
     };
 
     this._cellRenderer = this._cellRenderer.bind(this);
+    this._rowRenderer = this._rowRenderer.bind(this);
     this._onFixedColumnCountChange = this._createEventHandler(
       'fixedColumnCount',
     );
@@ -124,6 +125,7 @@ export default class SpreadsheetExample extends React.PureComponent {
               width={width}
               hideTopRightGridScrollbar
               hideBottomLeftGridScrollbar
+              rowRendererBottomRight={this._rowRenderer}
             />
           )}
         </AutoSizer>
@@ -140,6 +142,14 @@ export default class SpreadsheetExample extends React.PureComponent {
         role={role}
         aria-colindex={columnIndex - 2}>
         {columnIndex}, {rowIndex}
+      </div>
+    );
+  }
+
+  _rowRenderer({rowIndex, key, style, role, children, className}) {
+    return (
+      <div className={className} key={key} style={style} role={role}>
+        {children}
       </div>
     );
   }

@@ -23,6 +23,7 @@ export default function tableCellRangeRenderer({
   rowSizeAndPositionManager,
   rowStartIndex,
   rowStopIndex,
+  rowRenderer,
   styleCache,
   verticalOffsetAdjustment,
   visibleColumnIndices,
@@ -46,8 +47,10 @@ export default function tableCellRangeRenderer({
     const renderedCells = [];
     let rowDatum = rowSizeAndPositionManager.getSizeAndPositionOfCell(rowIndex);
 
-    const rowKey = `${rowIndex}`;
+    const rowKey = `row-${rowIndex}`;
     let rowStyle = {};
+    let rowRendererParams = {};
+    let renderedRow;
 
     if (canCacheStyle && styleCache[rowKey]) {
       rowStyle = styleCache[rowKey];
@@ -160,15 +163,18 @@ export default function tableCellRangeRenderer({
       renderedCells.push(renderedCell);
     }
 
-    const row = React.createElement('div', {
+    rowRendererParams = {
+      rowIndex,
       key: rowKey,
       style: rowStyle,
       role: 'row',
       className: 'Grid__row',
       children: renderedCells,
-    });
+    };
 
-    renderedRows.push(row);
+    renderedRow = rowRenderer(rowRendererParams);
+
+    renderedRows.push(renderedRow);
   }
 
   return renderedRows;

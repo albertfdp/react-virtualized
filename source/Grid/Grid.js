@@ -36,6 +36,7 @@ import {
   cancelAnimationTimeout,
 } from '../utils/requestAnimationTimeout';
 import getRTLOffsetType from './utils/getRTLOffsetType';
+import defaultRowRenderer from './defaultRowRenderer';
 
 /**
  * Specifies the number of milliseconds during which to disable pointer events while a scroll is in progress.
@@ -195,6 +196,9 @@ type Props = {
   /** Number of rows in grid.  */
   rowCount: number,
 
+  /** Row renderer wrapper */
+  rowRenderer: func,
+
   /** Wait this amount of time after the last scroll event before resetting Grid `pointer-events`. */
   scrollingResetTimeInterval: number,
 
@@ -282,6 +286,7 @@ class Grid extends React.PureComponent<Props, State> {
     overscanIndicesGetter: defaultOverscanIndicesGetter,
     overscanRowCount: 10,
     role: 'grid',
+    rowRenderer: defaultRowRenderer,
     scrollingResetTimeInterval: DEFAULT_SCROLLING_RESET_TIME_INTERVAL,
     scrollToAlignment: 'auto',
     scrollToColumn: -1,
@@ -1164,6 +1169,7 @@ class Grid extends React.PureComponent<Props, State> {
       overscanIndicesGetter,
       overscanRowCount,
       rowCount,
+      rowRenderer,
       width,
       isScrollingOptOut,
     } = props;
@@ -1305,6 +1311,7 @@ class Grid extends React.PureComponent<Props, State> {
         isScrolling,
         isScrollingOptOut,
         parent: this,
+        rowRenderer,
         rowSizeAndPositionManager: instanceProps.rowSizeAndPositionManager,
         rowStartIndex,
         rowStopIndex,
