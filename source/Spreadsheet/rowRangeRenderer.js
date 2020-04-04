@@ -5,49 +5,17 @@ import type {CellRangeRendererParams} from '../Grid/types';
 import cellRangeRenderer from './cellRangeRenderer';
 
 function rowRenderer({
-  canCacheStyle,
-  cellCache,
   cellRangeRenderer,
-  cellRenderer,
   className,
-  columnSizeAndPositionManager,
-  columnStartIndex,
-  columnStopIndex,
-  deferredMeasurementCache,
-  horizontalOffsetAdjustment,
-  isRowVisible,
-  isScrolling,
-  isScrollingOptOut,
   key,
   role,
-  rowIndex,
-  rowSizeAndPositionManager,
   style,
-  styleCache,
-  verticalOffsetAdjustment,
-  visibleColumnIndices,
+  ...props
 }) {
   return React.createElement(
     'div',
     {className, key, role, style},
-    cellRangeRenderer({
-      canCacheStyle,
-      cellCache,
-      cellRenderer,
-      columnSizeAndPositionManager,
-      columnStartIndex,
-      columnStopIndex,
-      deferredMeasurementCache,
-      horizontalOffsetAdjustment,
-      isRowVisible,
-      isScrolling,
-      isScrollingOptOut,
-      rowIndex,
-      rowSizeAndPositionManager,
-      styleCache,
-      verticalOffsetAdjustment,
-      visibleColumnIndices,
-    }),
+    cellRangeRenderer(props),
   );
 }
 
@@ -58,6 +26,7 @@ export default function rowRangeRenderer({
   columnStartIndex,
   columnStopIndex,
   deferredMeasurementCache,
+  direction,
   horizontalOffsetAdjustment,
   isScrolling,
   isScrollingOptOut,
@@ -80,6 +49,7 @@ export default function rowRangeRenderer({
   const areOffsetsAdjusted =
     columnSizeAndPositionManager.areOffsetsAdjusted() ||
     rowSizeAndPositionManager.areOffsetsAdjusted();
+  const isRTL = direction === 'rtl';
 
   const canCacheStyle = !isScrolling && !areOffsetsAdjusted;
 
@@ -97,7 +67,8 @@ export default function rowRangeRenderer({
     } else {
       rowStyle = {
         height: rowDatum.size,
-        left: horizontalOffsetAdjustment,
+        left: isRTL ? undefined : horizontalOffsetAdjustment,
+        right: isRTL ? horizontalOffsetAdjustment : undefined,
         position: 'absolute',
         top: rowDatum.offset + verticalOffsetAdjustment,
       };
@@ -114,6 +85,7 @@ export default function rowRangeRenderer({
       columnStopIndex,
       deferredMeasurementCache,
       horizontalOffsetAdjustment,
+      isRTL,
       isRowVisible,
       isScrolling,
       isScrollingOptOut,

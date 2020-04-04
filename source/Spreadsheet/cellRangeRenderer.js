@@ -9,6 +9,7 @@ export default function cellRangeRenderer({
   columnStopIndex,
   deferredMeasurementCache,
   horizontalOffsetAdjustment,
+  isRTL,
   isRowVisible,
   isScrolling,
   isScrollingOptOut,
@@ -50,14 +51,16 @@ export default function cellRangeRenderer({
         // Positioning them further to the right/bottom influences their measured size.
         style = {
           height: 'auto',
-          left: 0,
+          left: isRTL ? undefined : 0,
+          right: isRTL ? 0 : undefined,
           position: 'absolute',
           top: 0,
           width: 'auto',
         };
       } else {
         style = {
-          left: columnDatum.offset,
+          left: isRTL ? undefined : columnDatum.offset,
+          right: isRTL ? columnDatum.offset : undefined,
           position: 'absolute',
           top: 0,
           bottom: 0,
