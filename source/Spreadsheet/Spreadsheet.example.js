@@ -10,7 +10,7 @@ import {
 import {LabeledInput, InputRow} from '../demo/LabeledInput';
 import AutoSizer from '../AutoSizer';
 import Spreadsheet from './Spreadsheet';
-import cellRangeRenderer from './cellRangeRenderer';
+import cellRangeRenderer from './rowRangeRenderer';
 import styles from './Spreadsheet.example.css';
 
 const STYLE = {
