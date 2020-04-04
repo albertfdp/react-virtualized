@@ -44,14 +44,20 @@ export default function defaultCellRangeRenderer({
     const rowKey = `row-${rowIndex}`;
     let rowRendererParams = {};
     let rowStyle;
-    let renderedRow;
 
     let rowDatum = rowSizeAndPositionManager.getSizeAndPositionOfCell(rowIndex);
+    let isRowVisible =
+      rowIndex >= visibleRowIndices.start && rowIndex <= visibleRowIndices.stop;
 
     if (canCacheStyle && styleCache[rowKey]) {
       rowStyle = styleCache[rowKey];
     } else {
-      rowStyle = {};
+      rowStyle = {
+        height: rowDatum.size,
+        left: horizontalOffsetAdjustment,
+        position: 'absolute',
+        top: rowDatum.offset + verticalOffsetAdjustment,
+      };
     }
 
     for (
@@ -62,17 +68,17 @@ export default function defaultCellRangeRenderer({
       let columnDatum = columnSizeAndPositionManager.getSizeAndPositionOfCell(
         columnIndex,
       );
-      let isVisible =
+      let isColumnVisible =
         columnIndex >= visibleColumnIndices.start &&
-        columnIndex <= visibleColumnIndices.stop &&
-        rowIndex >= visibleRowIndices.start &&
-        rowIndex <= visibleRowIndices.stop;
-      let key = `${rowIndex}-${columnIndex}`;
+        columnIndex <= visibleColumnIndices.stop;
+
+      let isVisible = isColumnVisible && isRowVisible;
+      let columnKey = `${rowIndex}-${columnIndex}`;
       let style;
 
       // Cache style objects so shallow-compare doesn't re-render unnecessarily.
-      if (canCacheStyle && styleCache[key]) {
-        style = styleCache[key];
+      if (canCacheStyle && styleCache[columnKey]) {
+        style = styleCache[columnKey];
       } else {
         // In deferred mode, cells will be initially rendered before we know their size.
         // Don't interfere with CellMeasurer's measurements by setting an invalid size.
@@ -92,14 +98,14 @@ export default function defaultCellRangeRenderer({
           };
         } else {
           style = {
-            height: rowDatum.size,
-            left: columnDatum.offset + horizontalOffsetAdjustment,
+            left: columnDatum.offset,
             position: 'absolute',
-            top: rowDatum.offset + verticalOffsetAdjustment,
+            top: 0,
+            bottom: 0,
             width: columnDatum.size,
           };
 
-          styleCache[key] = style;
+          styleCache[columnKey] = style;
         }
       }
 
@@ -107,7 +113,7 @@ export default function defaultCellRangeRenderer({
         columnIndex,
         isScrolling,
         isVisible,
-        key,
+        key: columnKey,
         parent,
         rowIndex,
         style,
@@ -130,11 +136,11 @@ export default function defaultCellRangeRenderer({
         !horizontalOffsetAdjustment &&
         !verticalOffsetAdjustment
       ) {
-        if (!cellCache[key]) {
-          cellCache[key] = cellRenderer(cellRendererParams);
+        if (!cellCache[columnKey]) {
+          cellCache[columnKey] = cellRenderer(cellRendererParams);
         }
 
-        renderedCell = cellCache[key];
+        renderedCell = cellCache[columnKey];
 
         // If the user is no longer scrolling, don't cache cells.
         // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
@@ -161,6 +167,39 @@ export default function defaultCellRangeRenderer({
       className: 'Grid__row',
       children: renderedCells,
     };
+
+    let renderedRow;
+
+    // Avoid re-creating rows while scrolling.
+    // This can lead to the same row being created many times and can cause performance issues for "heavy" rows.
+    // If a scroll is in progress- cache and reuse rows.
+    // This cache will be thrown away once scrolling completes.
+    // However if we are scaling scroll positions and sizes, we should also avoid caching.
+    // This is because the offset changes slightly as scroll position changes and caching leads to stale values.
+    // For more info refer to issue #395
+    //
+    // If isScrollingOptOut is specified, we always cache rows.
+    // For more info refer to issue #1028
+    if (
+      (isScrollingOptOut || isScrolling) &&
+      !horizontalOffsetAdjustment &&
+      !verticalOffsetAdjustment
+    ) {
+      if (!cellCache[rowKey]) {
+        cellCache[rowKey] = rowRenderer(rowRendererParams);
+      }
+
+      renderedRow = cellCache[rowKey];
+
+      // If the user is no longer scrolling, don't cache cells.
+      // This makes dynamic cell content difficult for users and would also lead to a heavier memory footprint.
+    } else {
+      renderedRow = rowRenderer(rowRendererParams);
+    }
+
+    if (renderedRow == null || renderedRow === false) {
+      continue;
+    }
 
     renderedRow = rowRenderer(rowRendererParams);
     renderedRows.push(renderedRow);
