@@ -21,6 +21,7 @@ import InfiniteLoaderExample from '../InfiniteLoader/InfiniteLoader.example';
 import ListExample from '../List/List.example';
 import MasonryExample from '../Masonry/Masonry.example';
 import MultiGridExample from '../MultiGrid/MultiGrid.example';
+import SpreadsheetExample from '../Spreadsheet/Spreadsheet.example';
 import ScrollSyncExample from '../ScrollSync/ScrollSync.example';
 import TableExample from '../Table/Table.example';
 import WindowScrollerExample from '../WindowScroller/WindowScroller.example';
@@ -36,6 +37,7 @@ const COMPONENT_EXAMPLES_MAP = {
   '/components/InfiniteLoader': InfiniteLoaderExample,
   '/components/List': ListExample,
   '/components/MultiGrid': MultiGridExample,
+  '/components/Spreadsheet': SpreadsheetExample,
   '/components/ScrollSync': ScrollSyncExample,
   '/components/Table': TableExample,
   '/components/WindowScroller': WindowScrollerExample,
@@ -148,6 +150,9 @@ export default class Application extends React.PureComponent {
               </ComponentLink>
               <ComponentLink to="/components/MultiGrid">
                 MultiGrid
+              </ComponentLink>
+              <ComponentLink to="/components/Spreadsheet">
+                Spreadsheet
               </ComponentLink>
               <ComponentLink to="/components/ScrollSync">
                 ScrollSync
