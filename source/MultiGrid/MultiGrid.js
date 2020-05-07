@@ -20,6 +20,7 @@ class MultiGrid extends React.PureComponent {
     classNameBottomRightGrid: PropTypes.string.isRequired,
     classNameTopLeftGrid: PropTypes.string.isRequired,
     classNameTopRightGrid: PropTypes.string.isRequired,
+    direction: PropTypes.string.isRequired,
     enableFixedColumnScroll: PropTypes.bool.isRequired,
     enableFixedRowScroll: PropTypes.bool.isRequired,
     fixedColumnCount: PropTypes.number.isRequired,
@@ -39,6 +40,7 @@ class MultiGrid extends React.PureComponent {
     classNameBottomRightGrid: '',
     classNameTopLeftGrid: '',
     classNameTopRightGrid: '',
+    direction: 'ltr',
     enableFixedColumnScroll: false,
     enableFixedRowScroll: false,
     fixedColumnCount: 0,
@@ -201,7 +203,11 @@ class MultiGrid extends React.PureComponent {
     this._handleInvalidatedGridSize();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if (this.props.direction !== prevProps.direction) {
+      this._handleInvalidatedGridSize(true);
+    }
+
     this._handleInvalidatedGridSize();
   }
 
@@ -396,8 +402,8 @@ class MultiGrid extends React.PureComponent {
     return this._topGridHeight;
   }
 
-  _handleInvalidatedGridSize() {
-    if (typeof this._deferredInvalidateColumnIndex === 'number') {
+  _handleInvalidatedGridSize(forced) {
+    if (typeof this._deferredInvalidateColumnIndex === 'number' || forced) {
       const columnIndex = this._deferredInvalidateColumnIndex;
       const rowIndex = this._deferredInvalidateRowIndex;
 
@@ -419,6 +425,7 @@ class MultiGrid extends React.PureComponent {
   _maybeCalculateCachedStyles(resetAll) {
     const {
       columnWidth,
+      direction,
       enableFixedColumnScroll,
       enableFixedRowScroll,
       height,
@@ -445,6 +452,8 @@ class MultiGrid extends React.PureComponent {
       resetAll ||
       fixedRowCount !== this._lastRenderedFixedRowCount ||
       rowHeight !== this._lastRenderedRowHeight;
+
+    const isRtl = direction === 'rtl';
 
     if (resetAll || sizeChange || style !== this._lastRenderedStyle) {
       this._containerOuterStyle = {
@@ -475,7 +484,8 @@ class MultiGrid extends React.PureComponent {
       styleBottomLeftGrid !== this._lastRenderedStyleBottomLeftGrid
     ) {
       this._bottomLeftGridStyle = {
-        left: 0,
+        left: isRtl ? undefined : 0,
+        right: isRtl ? 0 : undefined,
         overflowX: 'hidden',
         overflowY: enableFixedColumnScroll ? 'auto' : 'hidden',
         position: 'absolute',
@@ -488,8 +498,11 @@ class MultiGrid extends React.PureComponent {
       leftSizeChange ||
       styleBottomRightGrid !== this._lastRenderedStyleBottomRightGrid
     ) {
+      const offset = this._getLeftGridWidth(this.props);
+
       this._bottomRightGridStyle = {
-        left: this._getLeftGridWidth(this.props),
+        left: isRtl ? undefined : offset,
+        right: isRtl ? offset : undefined,
         position: 'absolute',
         ...styleBottomRightGrid,
       };
@@ -497,7 +510,8 @@ class MultiGrid extends React.PureComponent {
 
     if (resetAll || styleTopLeftGrid !== this._lastRenderedStyleTopLeftGrid) {
       this._topLeftGridStyle = {
-        left: 0,
+        left: isRtl ? undefined : 0,
+        right: isRtl ? 0 : undefined,
         overflowX: 'hidden',
         overflowY: 'hidden',
         position: 'absolute',
@@ -511,8 +525,11 @@ class MultiGrid extends React.PureComponent {
       leftSizeChange ||
       styleTopRightGrid !== this._lastRenderedStyleTopRightGrid
     ) {
+      const offset = this._getLeftGridWidth(this.props);
+
       this._topRightGridStyle = {
-        left: this._getLeftGridWidth(this.props),
+        left: isRtl ? undefined : offset,
+        right: isRtl ? offset : undefined,
         overflowX: enableFixedRowScroll ? 'auto' : 'hidden',
         overflowY: 'hidden',
         position: 'absolute',
@@ -723,6 +740,7 @@ class MultiGrid extends React.PureComponent {
   _renderTopRightGrid(props) {
     const {
       columnCount,
+      direction,
       enableFixedRowScroll,
       fixedColumnCount,
       fixedRowCount,
@@ -743,11 +761,14 @@ class MultiGrid extends React.PureComponent {
     let gridHeight = height,
       style = this._topRightGridStyle;
 
+    const isRtl = direction === 'rtl';
+
     if (hideTopRightGridScrollbar) {
       gridHeight = height + additionalHeight;
       style = {
         ...this._topRightGridStyle,
-        left: 0,
+        left: isRtl ? undefined : 0,
+        right: isRtl ? 0 : undefined,
       };
     }
 
