@@ -210,7 +210,7 @@ export default class CellSizeAndPositionManager {
 
     const totalSize = this.getTotalSize();
 
-    if (totalSize <= 0) {
+    if (totalSize === 0) {
       return {};
     }
 
