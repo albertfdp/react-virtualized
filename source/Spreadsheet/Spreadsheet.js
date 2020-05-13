@@ -2,7 +2,8 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import {polyfill} from 'react-lifecycles-compat';
-import CellMeasurerCacheDecorator from './CellMeasurerCacheDecorator';
+import CellMeasurerCacheDecorator from '../MultiGrid/CellMeasurerCacheDecorator';
+import tableRangeRenderer from './tableRangeRenderer';
 import Grid from '../Grid';
 
 const SCROLLBAR_SIZE_BUFFER = 20;
@@ -14,8 +15,9 @@ const SCROLLBAR_SIZE_BUFFER = 20;
  * If no sticky columns, only 1 sticky header Grid will be rendered.
  * If sticky columns, 2 sticky header Grids will be rendered.
  */
-class MultiGrid extends React.PureComponent {
+class Spreadsheet extends React.PureComponent {
   static propTypes = {
+    cellRangeRendererBottomRight: PropTypes.func,
     classNameBottomLeftGrid: PropTypes.string.isRequired,
     classNameBottomRightGrid: PropTypes.string.isRequired,
     classNameTopLeftGrid: PropTypes.string.isRequired,
@@ -32,6 +34,7 @@ class MultiGrid extends React.PureComponent {
     noContentRendererTopLeftGrid: PropTypes.func,
     noContentRendererTopRightGrid: PropTypes.func,
     onScrollbarPresenceChange: PropTypes.func,
+    rowRendererBottomRight: PropTypes.func,
     style: PropTypes.object.isRequired,
     styleBottomLeftGrid: PropTypes.object.isRequired,
     styleBottomRightGrid: PropTypes.object.isRequired,
@@ -44,6 +47,7 @@ class MultiGrid extends React.PureComponent {
     classNameBottomRightGrid: '',
     classNameTopLeftGrid: '',
     classNameTopRightGrid: '',
+    cellRangeRendererBottomRight: tableRangeRenderer,
     direction: 'ltr',
     enableFixedColumnScroll: false,
     enableFixedRowScroll: false,
@@ -217,6 +221,7 @@ class MultiGrid extends React.PureComponent {
 
   render() {
     const {
+      cellRangeRendererBottomRight,
       onScroll,
       onSectionRendered,
       onScrollbarPresenceChange, // eslint-disable-line no-unused-vars
@@ -258,6 +263,7 @@ class MultiGrid extends React.PureComponent {
           })}
           {this._renderBottomRightGrid({
             ...rest,
+            cellRangeRenderer: cellRangeRendererBottomRight,
             onScroll,
             onSectionRendered,
             scrollLeft,
@@ -695,6 +701,7 @@ class MultiGrid extends React.PureComponent {
       fixedColumnCount,
       fixedRowCount,
       rowCount,
+      rowRendererBottomRight,
       scrollToColumn,
       scrollToRow,
     } = props;
@@ -713,6 +720,7 @@ class MultiGrid extends React.PureComponent {
         ref={this._bottomRightGridRef}
         rowCount={Math.max(0, rowCount - fixedRowCount)}
         rowHeight={this._rowHeightBottomGrid}
+        rowRenderer={rowRendererBottomRight}
         noContentRenderer={this.props.noContentRendererBottomRightGrid}
         scrollToColumn={scrollToColumn - fixedColumnCount}
         scrollToRow={scrollToRow - fixedRowCount}
@@ -845,6 +853,6 @@ class MultiGrid extends React.PureComponent {
   };
 }
 
-polyfill(MultiGrid);
+polyfill(Spreadsheet);
 
-export default MultiGrid;
+export default Spreadsheet;

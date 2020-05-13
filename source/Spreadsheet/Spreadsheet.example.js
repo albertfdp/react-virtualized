@@ -9,8 +9,8 @@ import {
 } from '../demo/ContentBox';
 import {LabeledInput, InputRow} from '../demo/LabeledInput';
 import AutoSizer from '../AutoSizer';
-import MultiGrid from './MultiGrid';
-import styles from './MultiGrid.example.css';
+import Spreadsheet from './Spreadsheet';
+import styles from './Spreadsheet.example.css';
 
 const STYLE = {
   border: '1px solid #ddd',
@@ -27,7 +27,7 @@ const STYLE_TOP_RIGHT_GRID = {
   fontWeight: 'bold',
 };
 
-export default class MultiGridExample extends React.PureComponent {
+export default class SpreadsheetExample extends React.PureComponent {
   static contextTypes = {
     list: PropTypes.instanceOf(Immutable.List).isRequired,
   };
@@ -44,6 +44,7 @@ export default class MultiGridExample extends React.PureComponent {
     };
 
     this._cellRenderer = this._cellRenderer.bind(this);
+    this._rowRenderer = this._rowRenderer.bind(this);
     this._onFixedColumnCountChange = this._createEventHandler(
       'fixedColumnCount',
     );
@@ -58,9 +59,9 @@ export default class MultiGridExample extends React.PureComponent {
     return (
       <ContentBox>
         <ContentBoxHeader
-          text="MultiGrid"
-          sourceLink="https://github.com/bvaughn/react-virtualized/blob/master/source/MultiGrid/MultiGrid.example.js"
-          docsLink="https://github.com/bvaughn/react-virtualized/blob/master/docs/MultiGrid.md"
+          text="Spreadsheet"
+          sourceLink="https://github.com/bvaughn/react-virtualized/blob/master/source/Spreadsheet/Spreadsheet.example.js"
+          docsLink="https://github.com/bvaughn/react-virtualized/blob/master/docs/Spreadsheet.md"
         />
 
         <ContentBoxParagraph>
@@ -99,7 +100,7 @@ export default class MultiGridExample extends React.PureComponent {
 
         <AutoSizer disableHeight>
           {({width}) => (
-            <MultiGrid
+            <Spreadsheet
               {...this.state}
               cellRenderer={this._cellRenderer}
               columnWidth={75}
@@ -124,6 +125,7 @@ export default class MultiGridExample extends React.PureComponent {
               width={width}
               hideTopRightGridScrollbar
               hideBottomLeftGridScrollbar
+              rowRendererBottomRight={this._rowRenderer}
             />
           )}
         </AutoSizer>
@@ -131,10 +133,23 @@ export default class MultiGridExample extends React.PureComponent {
     );
   }
 
-  _cellRenderer({columnIndex, key, rowIndex, style}) {
+  _cellRenderer({columnIndex, key, rowIndex, style, role}) {
     return (
-      <div className={styles.Cell} key={key} style={style}>
+      <div
+        className={styles.Cell}
+        key={key}
+        style={style}
+        role={role}
+        aria-colindex={columnIndex - 2}>
         {columnIndex}, {rowIndex}
+      </div>
+    );
+  }
+
+  _rowRenderer({rowIndex, key, style, role, children, className}) {
+    return (
+      <div className={className} key={key} style={style} role={role}>
+        {children}
       </div>
     );
   }
